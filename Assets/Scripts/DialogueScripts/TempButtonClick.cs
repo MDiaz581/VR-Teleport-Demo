@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpoonHealth : MonoBehaviour
+public class TempButtonClick : MonoBehaviour
 {
-    public int health;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -15,9 +13,11 @@ public class SpoonHealth : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(health <= 0)
-        {
-            Destroy(gameObject);
-        }
+        
+    }
+
+    public void clickFunc()
+    {
+        Debug.Log("Clicked Button");
     }
 }

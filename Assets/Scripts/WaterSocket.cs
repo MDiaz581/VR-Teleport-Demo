@@ -23,16 +23,19 @@ public class WaterSocket : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        /*
         socket = GetComponent<XRSocketInteractor>();
 
         socket.onSelectEnter.AddListener(OnSocketEnter);
         socket.onSelectExit.AddListener(OnSocketExit);
+        */
     }
 
     void Update()
     {
         if (RoomChecker.fermentingToiletWine)
         {
+            apple.transform.position = transform.position;
             if (!RoomChecker.toiletIsDown)
             {
                 timer += Time.deltaTime;
@@ -50,13 +53,15 @@ public class WaterSocket : MonoBehaviour
                 timer = 0f;
                 if(apple != null)
                 {
-                    apple.SetActive(false);                  
+                    RoomChecker.hasApple = false;
+                    //apple.SetActive(false);
+                    Destroy(apple);
                 }
                 
             }
         }
     }
-
+/*
     void OnSocketEnter(XRBaseInteractable socketObject)
     {
         if (socketObject.gameObject.CompareTag("Red"))
@@ -70,6 +75,26 @@ public class WaterSocket : MonoBehaviour
 
     }
     void OnSocketExit(XRBaseInteractable socketObject)
+    {
+        Debug.Log("Removed Apple");
+        timer = 0f;
+        RoomChecker.fermentingToiletWine = false;
+    }
+*/
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Red"))
+        {
+            
+            Debug.Log("OBJECT IS PLACED.");
+            apple = other.gameObject;
+            RoomChecker.fermentingToiletWine = true;
+
+
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
     {
         Debug.Log("Removed Apple");
         timer = 0f;

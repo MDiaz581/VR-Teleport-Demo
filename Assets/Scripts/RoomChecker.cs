@@ -37,6 +37,8 @@ public class RoomChecker : MonoBehaviour
 
     public GameObject apple;
 
+    public bool hasApple;
+
     public GameObject canvasObject;
 
     public Text loseText;
@@ -51,15 +53,81 @@ public class RoomChecker : MonoBehaviour
 
     public AudioSource AS;
 
+    public float textTimer;
+
+    private DialogueManager dialogueManager;
+
+    private bool startTextTimer;
+
+    private bool spottedVent;
+
+    private SpeechManager speechManager;
+
+    public int ventConvoInt;
+
+    public GameObject button;
+
+    public GameObject dialogueBox;
+
+    public bool gameStart;
+
+    private float gameStartCountdown;
+    
+
     // Start is called before the first frame update
     void Start()
     {
         timer = initialTimer;
+        textTimer = 0f;
+
+        dialogueManager = FindObjectOfType<DialogueManager>();
+        speechManager = FindObjectOfType<SpeechManager>();
+
+        dialogueManager.StartDialogue(0);
+        button.SetActive(false);
+        startTextTimer = false;
+        spottedVent = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (speechManager.canSeeOrigin && !spottedVent)
+        {
+            dialogueManager.StartDialogue(1);
+            startTextTimer = true;
+            spottedVent = true;
+        }
+
+        if (startTextTimer)
+        {
+            textTimer += Time.deltaTime;            
+            if (textTimer >= 5)
+            {               
+                textTimer = 0;
+                Debug.Log("Resetting Timer");
+                dialogueManager.StartDialogue(ventConvoInt);
+                ventConvoInt += 1;
+            }
+            if(ventConvoInt == 13)
+            {
+                startTextTimer = false;
+                button.SetActive(true);
+            }
+
+        }
+
+        if (gameStart)
+        {
+            gameStartCountdown += Time.deltaTime;
+
+            if(gameStartCountdown >= 4)
+            {
+                dialogueBox.SetActive(false);
+            }
+        
+
+
         timer -= Time.deltaTime;
         if (timer <= Random.Range(5f,10f))
         {
@@ -135,7 +203,12 @@ public class RoomChecker : MonoBehaviour
 
                 if (checkTimer <= 0)
                 {
-                    Instantiate(apple, appleSpawnPos.position, appleSpawnPos.rotation);
+                    if (!hasApple)
+                    {
+                        Instantiate(apple, appleSpawnPos.position, appleSpawnPos.rotation);
+                        hasApple = true;
+                    }
+                    
                     Debug.Log("Finished Check");
                     timer = initialTimer;
                     AS.PlayOneShot(hatchSlidingSound);
@@ -148,6 +221,12 @@ public class RoomChecker : MonoBehaviour
             }
             
         }
+        }
     }
 
+    public void StartGame()
+    {
+        gameStart = true;
+        dialogueManager.StartDialogue(14);
+    }
 }

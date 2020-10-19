@@ -12,10 +12,17 @@ public class DigScript : MonoBehaviour
 
     public Text winText;
 
-    public int digsLeft = 10;
+    public int digsLeft = 15;
 
     public GameObject canvasObject;
 
+    private AudioSource AS;
+
+    public AudioClip digSFX;
+    private void Awake()
+    {
+        AS = GetComponent<AudioSource>();
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -33,8 +40,9 @@ public class DigScript : MonoBehaviour
     {
         if(other.gameObject.tag == "Spoon" && !RoomChecker.bedIsDown)
         {
-            dirt.transform.position = dirt.transform.position - new Vector3(0f, 0.1f, 0f);
+            dirt.transform.position = dirt.transform.position - new Vector3(0f, 0.075f, 0f);
             digsLeft -= 1;
+            AS.PlayOneShot(digSFX);
             if(digsLeft <= 0)
             {
                 Debug.Log("You Win");
@@ -42,6 +50,7 @@ public class DigScript : MonoBehaviour
                 winText.text = "You win! you can escape through the hole";
             }
             other.GetComponent<SpoonHealth>().health -= 1;
+
         }
     }
 }
